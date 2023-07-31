@@ -28,8 +28,8 @@ services:
       - prometheus
   
   storage_api:
-    build: .
-    image: storage_api
+    # build: .
+    image: rgsopedraultimate/storage-api:latest
     ports:
       - "5000:5000"
 

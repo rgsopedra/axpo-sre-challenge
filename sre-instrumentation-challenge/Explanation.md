@@ -1,5 +1,12 @@
 # SRE Instrumentation Challenge - Roberto Gutiérrez solution and step-by-step process
 
+### How to test this solution:
+1. Apply all the manifests inside kubernetes/manifest into a cluster `kubectl apply -f kubernetes-manifests` + `kubectl port-forward pods/grafana-pod-name 3000:3000;kubectl port-forward pods/storage-api-pod-name 5000:5000;kubectl port-forward pods/prometheus-pod-name 9090:9090` OR docker-compose up
+2. Go to localhost:3000 (admin/admin)
+3. Import grafana-dashboard.json
+4. Execute ./scripts/generate_traffic.sh
+5. Check dashboards
+
 
 ### Step 0: Understand what's happening
 
@@ -23,5 +30,21 @@
 ### Step 3: Deployment
 - I'd normally go for helm or kustomize for a deployment, but I decided to keep it as simple and straightforward as possible
 - Not using any namespace for simplicity reasons
-- 
+- I didn't spend any time with ingresses, loadbalancers, etc... Directly using services. 
+- Created a really basic github-actions workflow to test, build and deploy images
+- Tested the yaml files agains a personal playground GKE cluster (in GCP) + kubectl port-forward
+![docs/kubectl-port-forward.png](docs/kubectl-port-forward.png)
+
+### What can be improved with more time
+1. Grafana dashboards are quite terrible
+2. More and better logging
+3. More and better unitary testing with pytest
+4. Github actions workflow is quite simple - I'd add merged-pr.yml, deploy.yml, concurrency-matrix for properly testing... 
+5. Loadbalancers, ingress-controllers, cert-managers... 
+
+
+
+
+
+
 
