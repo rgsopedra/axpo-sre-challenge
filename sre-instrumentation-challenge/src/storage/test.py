@@ -9,9 +9,7 @@ import storage
 def test_get_bucket_not_found():
     response = app.test_client().get("/api/buckets/1")
     assert response.status_code == 404
-
-    payload = json.loads(response.data)
-    assert payload["error"] == "not found"
+    assert response.data == b"not found"
 
 
 @patch("storage.bucket.data", {"1": "hello"})
@@ -35,9 +33,7 @@ def test_put_bucket():
 def test_delete_bucket_not_found():
     response = app.test_client().delete("/api/buckets/1")
     assert response.status_code == 400
-
-    payload = json.loads(response.data)
-    assert payload["error"] == "bad request"
+    assert response.data == b"bad request"
 
 
 # TODO: Add test for test_delete_bucket_found
