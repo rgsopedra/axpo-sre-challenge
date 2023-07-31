@@ -7,10 +7,18 @@ data:
   datasources.yaml: |
     apiVersion: 1 
     datasources:
-      - name: Prometheus
+      - name: Prometheus-k8s
         type: prometheus
         access: proxy
-        url: http://prometheus:9090
+        url: http://prometheus.default.svc.cluster.local:9090
+        password:
+        user:
+        database:
+        basicAuth: true
+        basicAuthUser: admin
+        basicAuthPassword: foobar
+        withCredentials:
+        isDefault: true
         
 ---
 apiVersion: apps/v1
@@ -41,13 +49,13 @@ spec:
               value: "false"
           volumeMounts:
             - name: grafana-storage
-              mountPath: /var/lib/grafana
-            - name: grafana-provisioning
-              mountPath: /etc/grafana/provisioning
+              mountPath: /var/lib/grafana/
+            - name: grafana-datasources
+              mountPath: /etc/grafana/provisioning/datasources
       volumes:
         - name: grafana-storage
           emptyDir: {}
-        - name: grafana-provisioning
+        - name: grafana-datasources
           configMap:
             name: grafana-provisioning
 

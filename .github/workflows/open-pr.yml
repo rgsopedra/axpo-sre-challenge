@@ -1,0 +1,56 @@
+name: "Open PR to main branch"
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'sre-instrumentation-challenge/**'
+
+jobs:
+  test_build:
+    runs-on: ubuntu-latest
+    name: test code and build image
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      ##Fixed version, or customizable via input?
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8' 
+      
+      ##requirements.txt? 
+      - name: Install dependencies
+        run: |-
+          cd sre-instrumentation-challenge/src && pip3 install -e . && pip3 install pytest
+        shell: bash
+      
+      ##I should spend more time checking the tests
+      - name: Run tests
+        run: |-
+          echo "Running tests"
+          cd sre-instrumentation-challenge/src && pytest storage/test.py
+        shell: bash
+
+      ##Bigger Dockerfile images should be test/built in a separate job, or only test/built when necessary. In this case as I'm doing the push at openPR, this does not make too much sense, but it would in a real project
+      # - name: Get changed files
+      #   id: changed-files
+      #   uses: tj-actions/changed-files@v32.1.2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Docker build and push
+        # if: contains(steps.changed-files.outputs.modified_files, 'Dockerfile')
+        run: |-
+          docker build sre-instrumentation-challenge -t ${{ secrets.DOCKERHUB_USERNAME }}/storage-api:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/storage-api:latest
+        shell: bash
+
