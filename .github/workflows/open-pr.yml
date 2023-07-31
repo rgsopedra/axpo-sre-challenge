@@ -50,7 +50,7 @@ jobs:
       - name: Docker build and push
         # if: contains(steps.changed-files.outputs.modified_files, 'Dockerfile')
         run: |-
-          docker build sre-instrumentation-challenge -t ${{ secrets.DOCKERHUB_USERNAME }}/sre-instrumentation-challenge:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/sre-instrumentation-challenge:latest
+          docker build sre-instrumentation-challenge -t ${{ secrets.DOCKERHUB_USERNAME }}/storage-api:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/storage-api:latest
         shell: bash
 
