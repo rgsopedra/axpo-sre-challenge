@@ -18,27 +18,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       
+      ##Fixed version, or customizable via input?
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8' 
       
+      ##requirements.txt? 
       - name: Install dependencies
         run: |-
-          cd sre-instrumentation-challenge/src && pip3 install -e .
+          cd sre-instrumentation-challenge/src && pip3 install -e . && pip3 install pytest
         shell: bash
       
+      ##I should spend more time checking the tests
       - name: Run tests
         run: |-
           echo "Running tests"
           cd sre-instrumentation-challenge/src && pytest storage/test.py
         shell: bash
 
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v32.1.2
+      ##Bigger Dockerfile images should be test/built in a separate job, or only test/built when necessary. In this case as I'm doing the push at openPR, this does not make too much sense, but it would in a real project
+      # - name: Get changed files
+      #   id: changed-files
+      #   uses: tj-actions/changed-files@v32.1.2
 
       - name: Docker build and push if Dockerfile has changed
-        if: contains(steps.changed-files.outputs.modified_files, 'Dockerfile')
+        # if: contains(steps.changed-files.outputs.modified_files, 'Dockerfile')
         run: |-
           docker build sre-instrumentation-challenge -t rgsopedraultimate/sre-instrumentation-challenge:latest
           docker push rgsopedraultimate/sre-instrumentation-challenge:latest
