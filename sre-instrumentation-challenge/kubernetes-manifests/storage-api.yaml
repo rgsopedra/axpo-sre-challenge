@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: storage-api
-          image: storage-api:latest
+          image: rgsopedraultimate/storage-api:latest
           ports:
             - containerPort: 5000
 
